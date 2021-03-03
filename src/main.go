@@ -1,12 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-	"log"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"strconv"
+
+	"firstgo_app/src/api"
+
 	"github.com/gorilla/mux"
 )
 
@@ -26,32 +29,32 @@ var tasks = allTask{
 	},
 }
 
-func getTasks(w http.ResponseWriter, r *http.Request){
+func getTasks(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(tasks)
 }
 
-func createTask(w http.ResponseWriter, r *http.Request){
+func createTask(w http.ResponseWriter, r *http.Request) {
 
 	var newTask task
 
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		fmt.Fprintf(w,"Inserta un dato valido")
+		fmt.Fprintf(w, "Inserta un dato valido")
 	}
 
 	json.Unmarshal(reqBody, &newTask)
 	newTask.ID = len(tasks) + 1
 	tasks = append(tasks, newTask)
 
-	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newTask)
 
 }
 
-func getTask(w http.ResponseWriter, r *http.Request){
+func getTask(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
@@ -61,17 +64,17 @@ func getTask(w http.ResponseWriter, r *http.Request){
 		fmt.Fprintf(w, "invalid id")
 		return
 	}
-	
+
 	for _, task := range tasks {
 		if task.ID == taskID {
-			w.Header().Set("Content-Type","application/json");
+			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(task)
 
 		}
 	}
 }
 
-func deleteTask(w http.ResponseWriter, r *http.Request){
+func deleteTask(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
@@ -84,14 +87,14 @@ func deleteTask(w http.ResponseWriter, r *http.Request){
 
 	for i, task := range tasks {
 		if task.ID == taskID {
-			tasks = append(tasks[:i], tasks[i + 1:]...)
+			tasks = append(tasks[:i], tasks[i+1:]...)
 			fmt.Fprintf(w, "La tarea con id %v ha sido removido", taskID)
 		}
 	}
 
 }
 
-func updateTask(w http.ResponseWriter, r *http.Request){
+func updateTask(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	taskID, err := strconv.Atoi(vars["id"])
@@ -111,7 +114,7 @@ func updateTask(w http.ResponseWriter, r *http.Request){
 
 	for i, t := range tasks {
 		if t.ID == taskID {
-			tasks = append(tasks[:i], tasks[i + 1:]...)
+			tasks = append(tasks[:i], tasks[i+1:]...)
 			updatedTask.ID = taskID
 			tasks = append(tasks, updatedTask)
 
@@ -120,20 +123,33 @@ func updateTask(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func indexRoute(w http.ResponseWriter, r *http.Request){
+func indexRoute(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "Bienvenido a mi API")
 }
 
 func main() {
 
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", indexRoute)
-	router.HandleFunc("/tasks", getTasks).Methods("GET")
-	router.HandleFunc("/tasks", createTask).Methods("POST")
-	router.HandleFunc("/tasks/{id}", getTask).Methods("GET")
-	router.HandleFunc("/tasks/{id}", deleteTask).Methods("DELETE")
-	router.HandleFunc("/tasks/{id}", updateTask).Methods("PUT")
+	var port string = "3000"
 
-	log.Fatal(http.ListenAndServe(":3000", router))
+	router := mux.NewRouter()
+	apiRouter := router.PathPrefix("/api/").Subrouter()
+
+	apiRouter.HandleFunc("/todos", api.GetTodos).Methods("GET")
+	apiRouter.HandleFunc("/todos", api.CreateTodo).Methods("POST")
+
+	apiRouter.HandleFunc("/todos/{id}", api.GetTodo).Methods("GET")
+	apiRouter.HandleFunc("/todos/{id}", api.DeleteTodo).Methods("DELETE")
+	apiRouter.HandleFunc("/todos/{id}", api.UpdateTodo).Methods("PUT")
+
+	// router := mux.NewRouter().StrictSlash(true)
+	// router.HandleFunc("/", indexRoute)
+	// router.HandleFunc("/tasks", getTasks).Methods("GET")
+	// router.HandleFunc("/tasks", createTask).Methods("POST")
+	// router.HandleFunc("/tasks/{id}", getTask).Methods("GET")
+	// router.HandleFunc("/tasks/{id}", deleteTask).Methods("DELETE")
+	// router.HandleFunc("/tasks/{id}", updateTask).Methods("PUT")
+
+	fmt.Printf("Server running at port %s", port)
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
