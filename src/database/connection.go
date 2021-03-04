@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 )
 
@@ -15,4 +16,16 @@ func GetConnection() *sql.DB {
 	}
 
 	return db
+}
+
+func GetConnection2() *gorm.DB {
+
+	db, err := gorm.Open("postgres", "host=localhost port=5432 user=postgres dbname=todo_db sslmode=disable password=root1983")
+
+	if err != nil {
+		panic("failed to connect database")
+	}
+
+	return db
+
 }

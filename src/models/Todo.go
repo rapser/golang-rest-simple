@@ -5,11 +5,13 @@ import (
 	"log"
 )
 
+// Todo es un ejemplo
 type Todo struct {
 	ID          int    `json:"id"`
 	Description string `json:"description"`
 }
 
+// Insert permite crear un todo
 func Insert(description string) (Todo, bool) {
 
 	db := database.GetConnection()
@@ -24,6 +26,7 @@ func Insert(description string) (Todo, bool) {
 	return Todo{todoID, ""}, true
 }
 
+// Get obtiene la lista de todos
 func Get(id string) (Todo, bool) {
 
 	db := database.GetConnection()
