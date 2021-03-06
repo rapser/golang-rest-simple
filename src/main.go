@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"firstgo_app/src/api"
+	"firstgo_app/src/models"
 
-	"github.com/gorilla/mux"
+	"github.com/gofiber/fiber/v2"
 )
 
 func indexRoute(w http.ResponseWriter, r *http.Request) {
@@ -15,19 +15,32 @@ func indexRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Bienvenido a mi API")
 }
 
+func setupRoutes(app *fiber.App) {
+
+	app.Get("/api/v1/task", models.GetTasks)
+	app.Get("/api/v1/task/:id", models.GetTask)
+	app.Post("/api/v1/task", models.CreateTask)
+	app.Put("/api/v1/task/:id", models.UpdateTask)
+	app.Delete("/api/v1/task/:id", models.DeleteTask)
+}
+
 func main() {
 
 	var port string = "3000"
 
-	router := mux.NewRouter()
-	apiRouter := router.PathPrefix("/api/").Subrouter()
+	app := fiber.New()
 
-	apiRouter.HandleFunc("/todos", api.GetTodos).Methods("GET")
-	apiRouter.HandleFunc("/todos", api.CreateTodo).Methods("POST")
+	setupRoutes(app)
 
-	apiRouter.HandleFunc("/todos/{id}", api.GetTodo).Methods("GET")
-	apiRouter.HandleFunc("/todos/{id}", api.DeleteTodo).Methods("DELETE")
-	apiRouter.HandleFunc("/todos/{id}", api.UpdateTodo).Methods("PUT")
+	// router := mux.NewRouter()
+	// apiRouter := router.PathPrefix("/api/").Subrouter()
+
+	// apiRouter.HandleFunc("/todos", api.GetTodos).Methods("GET")
+	// apiRouter.HandleFunc("/todos", api.CreateTodo).Methods("POST")
+
+	// apiRouter.HandleFunc("/todos/{id}", api.GetTodo).Methods("GET")
+	// apiRouter.HandleFunc("/todos/{id}", api.DeleteTodo).Methods("DELETE")
+	// apiRouter.HandleFunc("/todos/{id}", api.UpdateTodo).Methods("PUT")
 
 	// router := mux.NewRouter().StrictSlash(true)
 	// router.HandleFunc("/", indexRoute)
@@ -38,5 +51,5 @@ func main() {
 	// router.HandleFunc("/tasks/{id}", updateTask).Methods("PUT")
 
 	fmt.Printf("Server running at port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Fatal(app.Listen(":3000"))
 }
