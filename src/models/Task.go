@@ -1,12 +1,7 @@
 package models
 
 import (
-	"encoding/json"
-	"firstgo_app/src/database"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-
+	"github.com/gofiber/fiber/v2"
 	"github.com/jinzhu/gorm"
 )
 
@@ -19,35 +14,73 @@ type Task struct {
 	Content string `json:"content"`
 }
 
-func getTasks(w http.ResponseWriter, r *http.Request) {
+func GetTasks(c *fiber.Ctx) error {
 
-	db := database.GetConnection2()
-	w.Header().Set("Content-Type", "application/json")
-
-	var tasks []Task
-	db.Find(&tasks)
-	json.NewEncoder(w).Encode(&tasks)
+	const hello = "all task"
+	return c.SendString(hello)
 }
 
-func createTask(w http.ResponseWriter, r *http.Request) {
+func CreateTask(c *fiber.Ctx) error {
 
-	var newTask Task
-
-	db := database.GetConnection2()
-
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		fmt.Fprintf(w, "Inserta un dato valido")
-	}
-
-	json.Unmarshal(reqBody, &newTask)
-	db.Create(&newTask)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(newTask)
-
+	const hello = "create task"
+	return c.SendString(hello)
 }
+
+func GetTask(c *fiber.Ctx) error {
+
+	const hello = "get task"
+	return c.SendString(hello)
+}
+
+func UpdateTask(c *fiber.Ctx) error {
+
+	const hello = "update task"
+	return c.SendString(hello)
+}
+
+func DeleteTask(c *fiber.Ctx) error {
+
+	const hello = "delete task"
+	return c.SendString(hello)
+}
+
+// type Task struct {
+// 	gorm.Model
+
+// 	ID      int    `json:"id"`
+// 	Name    string `json:"name"`
+// 	Content string `json:"content"`
+// }
+
+// func getTasks(w http.ResponseWriter, r *http.Request) {
+
+// 	db := database.GetConnection2()
+// 	w.Header().Set("Content-Type", "application/json")
+
+// 	var tasks []Task
+// 	db.Find(&tasks)
+// 	json.NewEncoder(w).Encode(&tasks)
+// }
+
+// func createTask(w http.ResponseWriter, r *http.Request) {
+
+// 	var newTask Task
+
+// 	db := database.GetConnection2()
+
+// 	reqBody, err := ioutil.ReadAll(r.Body)
+// 	if err != nil {
+// 		fmt.Fprintf(w, "Inserta un dato valido")
+// 	}
+
+// 	json.Unmarshal(reqBody, &newTask)
+// 	db.Create(&newTask)
+
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.WriteHeader(http.StatusCreated)
+// 	json.NewEncoder(w).Encode(newTask)
+
+// }
 
 // func getTask(w http.ResponseWriter, r *http.Request) {
 
