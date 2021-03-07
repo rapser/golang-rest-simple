@@ -1,22 +1,17 @@
 package api
 
 import (
-	"encoding/json"
-	"firstgo_app/src/helpers"
 	"firstgo_app/src/models"
-	"strings"
-
-	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
+// Data es la plantilla de json de respuesta
 type Data struct {
 	Success bool          `json:"success"`
 	Data    []models.Todo `json:"data"`
 	Errors  []string      `json:"errors"`
 }
 
+/*
 func CreateTodo(w http.ResponseWriter, req *http.Request) {
 	bodyTodo, success := helpers.DecodeBody(req)
 	if success != true {
@@ -156,3 +151,4 @@ func DeleteTodo(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(json)
 }
+*/

@@ -1,16 +1,12 @@
 package models
 
-import (
-	"firstgo_app/src/database"
-	"log"
-)
-
 // Todo es un ejemplo
 type Todo struct {
 	ID          int    `json:"id"`
 	Description string `json:"description"`
 }
 
+/*
 // Insert permite crear un todo
 func Insert(description string) (Todo, bool) {
 
@@ -102,3 +98,4 @@ func GetAll() []Todo {
 
 	return todos
 }
+*/
